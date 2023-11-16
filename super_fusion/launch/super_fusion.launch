@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="cam_ns" default="/sensors/camera/flir/stereo/left" />
+
+  <include file="$(find dataset_playback)/launch/dataset_playback.launch" >
+    <arg name="cepton_enabled" value="true" />
+    <arg name="lrr_enabled" value="true" />
+    <arg name="stereo_cam_enabled" value="true" />
+  </include>
+
+  <!-- YOLO classification -->
+  <include file="$(find yolo_classification)/launch/yolo_classification.launch" >
+    <arg name="run_darknet" value="false" />
+    <arg name="camera_name" value="$(arg cam_ns)" />
+  </include>
+
+  <node pkg="super_fusion" type="multi_object_tracker" name="multi_object_tracker" output="screen" />
+
+  <node pkg="rviz" type="rviz" name="super_fusion_viz" args="-d $(find super_fusion)/rviz/config.rviz" respawn="true" />
+
+</launch>
